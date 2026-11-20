@@ -55,11 +55,11 @@
 
     <section class="card action-card">
       <div class="action-head">
-        <h2 class="action-title">即时取数浏览</h2>
+        <h2 class="action-title">{{ title }}</h2>
         <div class="action-buttons">
           <button type="button" class="pill-btn" @click="batchDelete">批量删除</button>
           <button type="button" class="pill-btn" @click="batchDownload">批量下载</button>
-          <button type="button" class="pill-btn" @click="pushToFolder">推送AA文件夹</button>
+          <button type="button" class="pill-btn" @click="pushToFolder">{{ localMode ? '推送4A文件夹' : '推送AA文件夹' }}</button>
           <button type="button" class="pill-btn primary" @click="shareData">共享数据查看</button>
         </div>
       </div>
@@ -88,7 +88,7 @@
           <thead>
             <tr>
               <th class="col-check">
-                <input ref="selectAllRef" type="checkbox" class="table-checkbox" :checked="allSelected" @change="toggleAll" />
+                <input ref="selectAllRef" type="checkbox" class="table-checkbox" aria-label="全选任务" :checked="allSelected" @change="toggleAll" />
               </th>
               <th>任务名称</th>
               <th>运行状态</th>
@@ -109,6 +109,7 @@
                 <input
                   type="checkbox"
                   class="table-checkbox"
+                  :aria-label="`选择${row.taskName}`"
                   :checked="selectedIds.includes(row.id)"
                   @change="toggleRow(row.id)"
                 />
@@ -124,7 +125,16 @@
               <td>{{ row.occupySize }}</td>
               <td class="cell-fail">{{ row.failReason }}</td>
               <td class="cell-ops">
-                <a class="op-link" @click="viewTask(row)">查看</a><span class="op-sep">/</span><a class="op-link" @click="rerunTask(row)">重跑</a><span class="op-sep">/</span><a class="op-link" @click="saveAsTask(row)">另存</a><span class="op-sep">/</span><a class="op-link" @click="deleteTask(row)">删除</a><span class="op-sep">/</span><a class="op-link" @click="editTask(row)">修改</a><span class="op-sep">/</span><a class="op-link" @click="lifecycleTask(row)">生命周期</a>
+                <template v-if="row.runState === '等待'">
+                  <a class="op-link" @click="viewTask(row)">查看</a><span class="op-sep">/</span><a class="op-link" @click="saveAsTask(row)">另存</a><span class="op-sep">/</span><a class="op-link" @click="deleteTask(row)">删除</a><span class="op-sep">/</span><a class="op-link" @click="rerunTask(row)">立即执行</a><span class="op-sep">/</span><a class="op-link" @click="messageTask(row)">提示消息</a><span class="op-sep">/</span><a class="op-link" @click="lifecycleTask(row)">生命周期</a>
+                </template>
+                <template v-else-if="row.runState === '正在运行'">
+                  <a class="op-link" @click="viewTask(row)">查看</a><span class="op-sep">/</span><a class="op-link" @click="rerunTask(row)">停止</a><span class="op-sep">/</span><a class="op-link" @click="saveAsTask(row)">另存</a><span class="op-sep">/</span><a class="op-link" @click="lifecycleTask(row)">生命周期</a>
+                </template>
+                <template v-else-if="row.runState === '成功'">
+                  <a class="op-link" @click="viewTask(row)">查看</a><span class="op-sep">/</span><a class="op-link" @click="downloadTask(row)">下载</a><span class="op-sep">/</span><a class="op-link" @click="rerunTask(row)">重跑</a><span class="op-sep">/</span><a class="op-link" @click="deleteTask(row)">删除</a><span class="op-sep">/</span><a class="op-link" @click="editTask(row)">修改</a><span class="op-sep">/</span><a class="op-link" @click="lifecycleTask(row)">……</a>
+                </template>
+                <template v-else><a class="op-link" @click="viewTask(row)">查看</a><span class="op-sep">/</span><a class="op-link" @click="rerunTask(row)">重跑</a><span class="op-sep">/</span><a class="op-link" @click="saveAsTask(row)">另存</a><span class="op-sep">/</span><a class="op-link" @click="deleteTask(row)">删除</a><span class="op-sep">/</span><a class="op-link" @click="editTask(row)">修改</a><span class="op-sep">/</span><a class="op-link" @click="lifecycleTask(row)">生命周期</a></template>
               </td>
             </tr>
             <tr v-if="!loading && !rows.length">
@@ -182,15 +192,23 @@
 <script setup>
 import { computed, nextTick, onMounted, reactive, ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { createTaskStore, toCsv } from '../data/taskExceptions.js'
 
-const runStates = ['成功', '运行中', '失败']
+const props = defineProps({ localMode: { type: Boolean, default: false }, initialTasks: Array, defaultRunState: { type: String, default: '失败' }, editEnabled: Boolean, title: { type: String, default: '即时取数浏览' } })
+const emit = defineEmits(['edit-task'])
+const router = useRouter()
+const localStore = props.localMode ? createTaskStore(props.initialTasks) : null
+const appliedFilters = reactive({})
+
+const runStates = props.editEnabled ? ['成功', '正在运行', '等待', '失败'] : ['成功', '运行中', '失败']
 const purposes = ['业务分析', '报表生成', '数据核查']
 
 const filters = reactive({
   taskName: '',
   submitDate: '',
   creator: '',
-  runState: '失败',
+  runState: props.defaultRunState,
   purpose: ''
 })
 
@@ -210,6 +228,17 @@ const allSelected = computed(() => rows.value.length > 0 && rows.value.every((ro
 const partiallySelected = computed(() => !allSelected.value && rows.value.some((row) => selectedIds.value.includes(row.id)))
 
 async function fetchList() {
+  if (localStore) {
+    const data = localStore.query(appliedFilters, page.value, pageSize.value)
+    total.value = data.total
+    const lastPage = Math.max(1, Math.ceil(data.total / pageSize.value))
+    if (page.value > lastPage) {
+      page.value = lastPage
+      return fetchList()
+    }
+    rows.value = data.list
+    return
+  }
   loading.value = true
   try {
     const params = new URLSearchParams({
@@ -236,6 +265,7 @@ async function fetchList() {
 }
 
 function search() {
+  Object.assign(appliedFilters, filters)
   page.value = 1
   selectedIds.value = []
   fetchList()
@@ -282,6 +312,13 @@ async function batchDelete() {
     return
   }
   try {
+    if (localStore) {
+      localStore.remove(selectedIds.value)
+      selectedIds.value = []
+      await fetchList()
+      ElMessage.success('删除成功')
+      return
+    }
     const response = await fetch('/api/query/instant', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -298,9 +335,25 @@ async function batchDelete() {
   }
 }
 
+function downloadTask(row) {
+  const previous = selectedIds.value
+  selectedIds.value = [row.id]
+  batchDownload()
+  selectedIds.value = previous
+}
+
 function batchDownload() {
   if (!selectedIds.value.length) {
     ElMessage.warning('请勾选需要下载的任务！')
+    return
+  }
+  if (localStore) {
+    const url = URL.createObjectURL(new Blob([toCsv(localStore.selected(selectedIds.value))], { type: 'text/csv;charset=utf-8' }))
+    const link = document.createElement('a')
+    link.href = url
+    link.download = '取数任务导出.csv'
+    link.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
     return
   }
   window.open(`/api/query/instant/download?ids=${encodeURIComponent(selectedIds.value.join(','))}`)
@@ -311,7 +364,7 @@ function pushToFolder() {
     ElMessage.warning('请勾选需要推送的任务！')
     return
   }
-  ElMessage.info('暂不支持推送 AA 文件夹，请使用下载功能')
+  ElMessage.info(props.localMode ? '推送4A文件夹暂不可用，请使用下载功能' : '暂不支持推送 AA 文件夹，请使用下载功能')
 }
 
 function shareData() {
@@ -324,11 +377,11 @@ function viewTask(row) {
 }
 
 function rerunTask(row) {
-  ElMessage.info(`任务「${row.taskName}」重跑功能未接入`)
+  ElMessage.info(`任务「${row.taskName}」重跑功能暂不可用`)
 }
 
 function saveAsTask(row) {
-  ElMessage.info(`任务「${row.taskName}」另存功能未接入`)
+  ElMessage.info(`任务「${row.taskName}」另存功能暂不可用`)
 }
 
 async function deleteTask(row) {
@@ -342,6 +395,13 @@ async function deleteTask(row) {
     return
   }
   try {
+    if (localStore) {
+      localStore.remove([row.id])
+      selectedIds.value = selectedIds.value.filter(id => id !== row.id)
+      await fetchList()
+      ElMessage.success('删除成功')
+      return
+    }
     const response = await fetch('/api/query/instant', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -359,11 +419,16 @@ async function deleteTask(row) {
 }
 
 function editTask(row) {
-  ElMessage.info(`任务「${row.taskName}」修改功能未接入`)
+  if (props.editEnabled) { emit('edit-task', row); return }
+  router.push({ path: '/new/5', query: { task: row.id, name: row.taskName, state: row.runState } })
 }
 
 function lifecycleTask(row) {
-  ElMessage.info(`任务「${row.taskName}」生命周期功能未接入`)
+  ElMessage.info(`任务「${row.taskName}」生命周期功能暂不可用`)
+}
+
+function messageTask(row) {
+  ElMessage.info(`任务「${row.taskName}」提示消息功能暂不可用`)
 }
 
 watch([rows, selectedIds], () => {
@@ -374,5 +439,11 @@ watch([rows, selectedIds], () => {
   })
 })
 
-onMounted(fetchList)
+function updateTask(id, changes) { localStore?.update(id, changes); fetchList() }
+defineExpose({ updateTask })
+
+onMounted(() => {
+  Object.assign(appliedFilters, filters)
+  fetchList()
+})
 </script>

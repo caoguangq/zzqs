@@ -1,0 +1,146 @@
+{
+  "results": [
+    {
+      "id": "G2-breadcrumb",
+      "ok": true,
+      "detail": "自助取数/取数任务/即时取数浏览"
+    },
+    {
+      "id": "G2-title",
+      "ok": true,
+      "detail": "即时取数浏览"
+    },
+    {
+      "id": "G2-menu",
+      "ok": true,
+      "detail": "即时任务修改"
+    },
+    {
+      "id": "G2-row-actions",
+      "ok": true,
+      "detail": "[\"查看\",\"另存\",\"删除\",\"立即执行\",\"提示消息\",\"生命周期\"]"
+    },
+    {
+      "id": "G2-refresh",
+      "ok": true,
+      "detail": "直接访问并刷新正常"
+    },
+    {
+      "id": "G2-default-all",
+      "ok": true,
+      "detail": "运行状态=全部 共 15 条"
+    },
+    {
+      "id": "G3-wait-ops",
+      "ok": true,
+      "detail": "[\"查看\",\"另存\",\"删除\",\"立即执行\",\"提示消息\",\"生命周期\"]"
+    },
+    {
+      "id": "G3-running-ops",
+      "ok": true,
+      "detail": "[\"查看\",\"停止\",\"另存\",\"生命周期\"]"
+    },
+    {
+      "id": "G3-success-ops",
+      "ok": true,
+      "detail": "[\"查看\",\"下载\",\"重跑\",\"删除\",\"修改\",\"……\"]"
+    },
+    {
+      "id": "G3-filter",
+      "ok": true,
+      "detail": "选中成功 {\"rows\":8,\"total\":\"共 8 条\"}"
+    },
+    {
+      "id": "G3-open-edit",
+      "ok": true,
+      "detail": "行=未捆绑目标校园客户--测试20260313164605唐雯丽 弹窗=true"
+    },
+    {
+      "id": "G4-edit-hint",
+      "ok": true,
+      "detail": "说明标签=(说明)"
+    },
+    {
+      "id": "G3-confirm-cancel",
+      "ok": true,
+      "detail": "确认框=true 取消后表单保留=true"
+    },
+    {
+      "id": "G3-save",
+      "ok": true,
+      "detail": "提示=保存成功 回写=验收-即时任务修改-07095成功唐雯丽02026-03-13 16:46:422026-03-13 16:57:452"
+    },
+    {
+      "id": "G3-state",
+      "ok": true,
+      "detail": "运行状态=成功"
+    },
+    {
+      "id": "G5-console",
+      "ok": true,
+      "detail": "console=0 pageerror=0"
+    },
+    {
+      "id": "G6-_query_instant",
+      "ok": true,
+      "detail": "落到=/query/instant 空页=false 行数=15"
+    },
+    {
+      "id": "G6-_new_1",
+      "ok": true,
+      "detail": "落到=/new/1 空页=false 行数=15"
+    },
+    {
+      "id": "G6-_new_2",
+      "ok": true,
+      "detail": "落到=/new/2 空页=false 行数=10"
+    },
+    {
+      "id": "G6-_new_3",
+      "ok": true,
+      "detail": "落到=/new/3 空页=false 行数=24"
+    },
+    {
+      "id": "G6-_new_4",
+      "ok": true,
+      "detail": "落到=/new/4 空页=false 行数=7"
+    },
+    {
+      "id": "G6-_new_6",
+      "ok": true,
+      "detail": "落到=/query/tasks 空页=false 行数=12"
+    },
+    {
+      "id": "G6-_new_7",
+      "ok": true,
+      "detail": "落到=/new/7 空页=false 行数=14"
+    },
+    {
+      "id": "G6-_new_8",
+      "ok": true,
+      "detail": "落到=/query/scheduled 空页=false 行数=4"
+    },
+    {
+      "id": "G6-_new_9",
+      "ok": true,
+      "detail": "落到=/query/scheduled 空页=false 行数=12"
+    },
+    {
+      "id": "G6-_new_10",
+      "ok": true,
+      "detail": "落到=/new/10 空页=false 行数=15"
+    },
+    {
+      "id": "G6-browse-ops",
+      "ok": true,
+      "detail": "[\"查看\",\"重跑\",\"另存\",\"删除\",\"修改\",\"生命周期\"]"
+    },
+    {
+      "id": "G3-browse-to-edit",
+      "ok": true,
+      "detail": "落到=/new/5?task=TASK9435&name=9435&state=%E5%A4%B1%E8%B4%A5 自动打开表单=true"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": []
+}

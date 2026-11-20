@@ -77,6 +77,6 @@ onMounted(async () => {
 })
 
 function logout() {
-  window.alert('演示环境，退出功能未接入')
+  window.alert('退出功能暂不可用')
 }
 </script>
