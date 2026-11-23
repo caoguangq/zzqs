@@ -1,0 +1,772 @@
+/* 26-51 页面样式作用域：所有 nf- 规则都限定在 .nf51-scope 内，避免影响已验收的 1-25 页面。 */
+.nf51-scope {
+  display: contents;
+}
+
+/* 新开发功能（编号 26-51）页面通用样式
+   参考依据：新开发功能/ 后评估材料中的截图，统一使用 nf- 前缀，避免影响已有页面。 */
+
+:where(.nf51-scope, .nf-dialog) .nf-page {
+  width: 100%;
+  max-width: 1760px;
+  margin: 0 auto;
+  /* 参考图内容区比现有外壳更靠内：左 59px、上 32px，按 1672×941 对齐 */
+  padding: 32px 9px 0 59px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-page-compact {
+  padding-top: 8px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-section-label {
+  margin: 0 0 14px;
+  color: #1f2329;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-card {
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-card + .nf-card {
+  margin-top: 20px;
+}
+
+/* ---------- 筛选卡片 ---------- */
+:where(.nf51-scope, .nf-dialog) .nf-filter-row {
+  display: flex;
+  align-items: center;
+  min-height: 72px;
+  padding: 0 60px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-filter-row + .nf-filter-row {
+  border-top: 1px solid #f0f0f0;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-filter-row.compact {
+  min-height: 50px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-filter-label {
+  flex: none;
+  width: 84px;
+  color: #606266;
+  font-size: 14px;
+  text-align: right;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-filter-label::after {
+  content: "：";
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-filter-control {
+  flex: none;
+  width: 400px;
+  margin-right: 40px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-sort-link {
+  margin-right: 26px;
+  color: #606266;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-sort-link:hover {
+  color: #1677ff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-sort-link.active {
+  color: #1677ff;
+}
+
+/* ---------- 按钮 ---------- */
+:where(.nf51-scope, .nf-dialog) .nf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  height: 40px;
+  padding: 0 28px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #333333;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-btn:hover {
+  border-color: #a9c8f5;
+  color: #1677ff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-btn-primary {
+  border-color: #1677ff;
+  background: #1677ff;
+  color: #ffffff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-btn-primary:hover {
+  border-color: #4096ff;
+  background: #4096ff;
+  color: #ffffff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-btn-ghost {
+  color: #1677ff;
+  border-color: #1677ff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-btn-sm {
+  min-width: 0;
+  height: 40px;
+  padding: 0 18px;
+  font-size: 14px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-filter-row .nf-btn + .nf-btn {
+  margin-left: 12px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-btn[disabled], :where(.nf51-scope, .nf-dialog) .nf-btn:disabled {
+  border-color: #e5e6eb;
+  background: #f7f8fa;
+  color: #c0c4cc;
+  cursor: not-allowed;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 0 10px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 8px 0 22px;
+  border: 0;
+  border-radius: 20px;
+  background: #1677ff;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-pill-btn:hover {
+  background: #4096ff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-pill-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-btn-icon {
+  margin-right: 6px;
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* ---------- 卡片头部 ---------- */
+:where(.nf51-scope, .nf-dialog) .nf-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px 12px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-card-title {
+  margin: 0;
+  color: #1f2329;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 22px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-view-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e5e6eb;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #8a9099;
+  cursor: pointer;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-view-toggle.active {
+  border-color: #1677ff;
+  color: #1677ff;
+}
+
+/* ---------- 查询条件说明 ---------- */
+:where(.nf51-scope, .nf-dialog) .nf-query-line {
+  margin: 0;
+  padding: 0 24px;
+  color: #606266;
+  font-size: 13px;
+  line-height: 22px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-query-line .nf-link {
+  font-size: 13px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-meta-line {
+  margin: 0;
+  padding: 0 24px 12px;
+  color: #909399;
+  font-size: 13px;
+  line-height: 22px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-meta-line span + span {
+  margin-left: 22px;
+}
+
+/* ---------- 表格 ---------- */
+:where(.nf51-scope, .nf-dialog) .nf-table-wrap {
+  padding: 0 24px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-table th {
+  height: 44px;
+  padding: 0 10px;
+  border: 1px solid #ebeef5;
+  background: #fafafa;
+  color: #1f2329;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-table td {
+  height: 44px;
+  padding: 4px 10px;
+  border: 1px solid #ebeef5;
+  color: #1f2329;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-table td.nf-cell-nowrap {
+  white-space: nowrap;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-table td.nf-cell-left {
+  text-align: left;
+  padding-left: 20px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-table tbody tr:hover td {
+  background: #f7fbff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-table .nf-col-check {
+  width: 56px;
+  padding: 0;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-table .nf-empty td {
+  height: 120px;
+  color: #909399;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-checkbox {
+  position: relative;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  border: 1px solid #dcdfe6;
+  border-radius: 2px;
+  background: #ffffff;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-checkbox:checked {
+  border-color: #1677ff;
+  background: #1677ff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid #ffffff;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-link {
+  color: #1677ff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-link:hover {
+  text-decoration: underline;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-link + .nf-sep, :where(.nf51-scope, .nf-dialog) .nf-sep + .nf-link {
+  margin: 0 5px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-sep {
+  margin: 0 5px;
+  color: #1677ff;
+}
+
+/* ---------- 分页 ---------- */
+:where(.nf51-scope, .nf-dialog) .nf-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px 20px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-pager-total {
+  color: #606266;
+  font-size: 13px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-pager-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-page-btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid #e5e6eb;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #606266;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-page-btn:hover:not(:disabled):not(.active) {
+  border-color: #a9c8f5;
+  color: #1677ff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-page-btn:disabled {
+  color: #c0c4cc;
+  cursor: not-allowed;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-page-btn.active {
+  border-color: #1677ff;
+  background: #1677ff;
+  color: #ffffff;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-page-jump {
+  margin-left: 10px;
+  color: #606266;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-page-input {
+  width: 56px;
+  height: 40px;
+  margin: 0 6px;
+  padding: 0 8px;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  color: #1f2329;
+  font-size: 13px;
+  text-align: center;
+  outline: none;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-page-input:focus {
+  border-color: #1677ff;
+}
+
+/* ---------- 详情/表单弹窗 ---------- */
+.nf-dialog .el-dialog__header {
+  margin-right: 0;
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.nf-dialog .el-dialog__title {
+  color: #1f2329;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.nf-dialog .el-dialog__body {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding: 20px 24px 8px;
+}
+
+.nf-dialog .el-dialog__footer {
+  padding: 6px 24px 20px;
+}
+
+.nf-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-form-banner {
+  margin-bottom: 20px;
+  padding: 10px 16px;
+  border-radius: 4px;
+  background: #f5f7fa;
+  color: #606266;
+  font-size: 13px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-form-banner b {
+  color: #1f2329;
+  font-weight: 500;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-form-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-form-label {
+  flex: none;
+  width: 96px;
+  padding-top: 8px;
+  color: #606266;
+  font-size: 14px;
+  text-align: right;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-form-label::after {
+  content: "：";
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-form-label.required::before {
+  content: "*";
+  margin-right: 4px;
+  color: #f5222d;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-form-control {
+  flex: 1;
+  min-width: 0;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-form-valid {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 8px 96px;
+  color: #00b42a;
+  font-size: 13px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-form-valid svg {
+  flex: none;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-desc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-desc-row {
+  color: #1f2329;
+  font-size: 13px;
+  line-height: 20px;
+  word-break: break-all;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-desc-label {
+  color: #909399;
+}
+
+/* ---------- 删除确认 / 删除结果 ---------- */
+:where(.nf51-scope, .nf-dialog) .nf-warn-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 2px 0 22px;
+  color: #1f2329;
+  font-size: 17px;
+  line-height: 24px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-warn-line svg {
+  flex: none;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-success-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 2px 0 20px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-success-title {
+  color: #1f2329;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-kv-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-kv-table th, :where(.nf51-scope, .nf-dialog) .nf-kv-table td {
+  padding: 11px 14px;
+  border: 1px solid #e5e6eb;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: left;
+  vertical-align: top;
+  word-break: break-word;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-kv-table th {
+  width: 34%;
+  background: #fafafa;
+  color: #606266;
+  font-weight: 400;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-kv-table td {
+  color: #1f2329;
+}
+
+/* ---------- 修改结果页 ---------- */
+:where(.nf51-scope, .nf-dialog) .nf-result-title {
+  margin: 0 0 22px;
+  color: #1f2329;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 30px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-result-card-title {
+  margin: 0;
+  padding: 20px 24px 0;
+  color: #1f2329;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-result-version {
+  margin: 0;
+  padding: 14px 24px 16px;
+  color: #606266;
+  font-size: 14px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-result-version .nf-link {
+  font-size: 14px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-result-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px 22px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-result-count {
+  color: #909399;
+  font-size: 14px;
+}
+
+/* ---------- 未实现占位 ---------- */
+:where(.nf51-scope, .nf-dialog) .nf-pending-card {
+  padding: 80px 24px;
+  text-align: center;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-pending-card h1 {
+  margin: 0 0 12px;
+  color: #1f2329;
+  font-size: 18px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-pending-card p {
+  margin: 0;
+  color: #909399;
+  font-size: 13px;
+  line-height: 22px;
+}
+
+/* ---------- 索引页 ---------- */
+:where(.nf51-scope, .nf-dialog) .nf-index-title {
+  margin: 0 0 6px;
+  color: #1f2329;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-desc {
+  margin: 0 0 22px;
+  color: #909399;
+  font-size: 13px;
+  line-height: 22px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-group + .nf-index-group {
+  margin-top: 22px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-group-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  color: #1f2329;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-count {
+  color: #909399;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(268px, 1fr));
+  gap: 14px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-item:hover {
+  border-color: #a9c8f5;
+  box-shadow: 0 2px 8px rgba(22, 119, 255, 0.08);
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-item.is-pending {
+  cursor: default;
+  background: #fafbfc;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-item.is-pending:hover {
+  border-color: #ebeef5;
+  box-shadow: none;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-no {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: #eaf3ff;
+  color: #1677ff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-item.is-pending .nf-index-no {
+  background: #f0f1f3;
+  color: #a3a9b3;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-text {
+  flex: 1;
+  min-width: 0;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-name {
+  display: block;
+  color: #1f2329;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-index-sub {
+  display: block;
+  margin-top: 2px;
+  color: #909399;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-tag {
+  flex: none;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-tag-done {
+  background: #e8fff0;
+  color: #00b42a;
+}
+
+:where(.nf51-scope, .nf-dialog) .nf-tag-pending {
+  background: #f2f3f5;
+  color: #909399;
+}

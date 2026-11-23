@@ -7,32 +7,68 @@
     </div>
 
     <nav class="sider-menu">
-      <template v-for="menu in menus" :key="menu.key">
-      <button
-        type="button"
-        class="menu-item"
-        :class="{ active: isActive(menu) }"
-        :title="menu.label"
-        :aria-expanded="menu.children ? expanded === menu.key : undefined"
-        @click="openMenu(menu)"
-      >
-        <MenuIcon :name="menu.icon" />
-        <span class="menu-label">{{ menu.label }}</span>
-        <svg v-if="menu.chevron !== false" class="menu-arrow" :class="{ expanded: menu.children && expanded === menu.key }" viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m8 4.5 5.5 5.5L8 15.5" />
-        </svg>
-      </button>
-      <div v-if="menu.children && expanded === menu.key && !collapsed" class="query-submenu">
-        <div v-for="group in menu.children" :key="group.key">
-          <button class="task-group" :class="{ selected: group.children.some(child => isLeafActive(child)) }" :aria-expanded="tasksExpanded === group.key" @click="tasksExpanded = tasksExpanded === group.key ? null : group.key">
-            <span>{{ group.label }}</span><span class="group-arrow" :class="{ expanded: tasksExpanded === group.key }">›</span>
-          </button>
-          <div v-if="tasksExpanded === group.key" class="task-pages">
-            <button v-for="child in group.children" :key="child.route" :class="{ selected: isLeafActive(child) }" :aria-current="isLeafActive(child) ? 'page' : undefined" @click="router.push(child.route)">{{ child.label }}</button>
+      <div v-for="menu in menus" :key="menu.key" class="menu-entry">
+        <button
+          type="button"
+          class="menu-item"
+          :class="{ active: isActive(menu), 'is-open': isOpen(menu) }"
+          :title="menu.label"
+          :aria-expanded="menu.children ? isOpen(menu) : undefined"
+          @click="openMenu(menu)"
+        >
+          <MenuIcon :name="menu.icon" />
+          <span class="menu-label">{{ menu.label }}</span>
+          <svg
+            v-if="menu.chevron !== false"
+            class="menu-arrow"
+            :class="{ rotated: isOpen(menu) }"
+            viewBox="0 0 20 20"
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="m8 4.5 5.5 5.5L8 15.5" />
+          </svg>
+        </button>
+
+        <!-- 二级/三级菜单：侧栏只有 159px，用右侧浮层避免文字被截断（悬停或点击展开） -->
+        <div
+          v-if="menu.children && !collapsed"
+          class="menu-flyout"
+          :class="{ 'is-open': isOpen(menu), 'is-wide': menu.wide }"
+        >
+          <div v-for="child in menu.children" :key="child.key" class="flyout-group">
+            <button
+              v-if="child.route"
+              type="button"
+              class="flyout-link"
+              :class="{ active: isActive(child) }"
+              @click="openMenu(child)"
+            >
+              {{ child.label }}
+            </button>
+            <span v-else class="flyout-title">{{ child.label }}</span>
+
+            <div v-if="child.children" class="flyout-list">
+              <button
+                v-for="leaf in child.children"
+                :key="leaf.key"
+                type="button"
+                class="flyout-leaf"
+                :class="{ active: isActive(leaf) }"
+                :aria-current="isActive(leaf) ? 'page' : undefined"
+                @click="openMenu(leaf)"
+              >
+                {{ leaf.label }}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      </template>
     </nav>
 
     <div class="sider-copyright">© 亚信科技 版权所有</div>
@@ -40,10 +76,10 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MenuIcon from '../components/MenuIcon.vue'
-import { menus } from '../config/menus.js'
+import { findMenuPathByRoute, menus } from '../config/menus.js'
 
 defineProps({
   collapsed: {
@@ -52,62 +88,67 @@ defineProps({
   }
 })
 
-const expanded = ref(null)
-const tasksExpanded = ref(null)
 const route = useRoute()
 const router = useRouter()
 
-watch(() => route.path, (path) => {
-  for (const menu of menus) {
-    const group = menu.children?.find(group => group.children.some(child => isLeafActive(child)))
-    if (group) { expanded.value = menu.key; tasksExpanded.value = group.key; return }
-  }
-}, { immediate: true })
+/** 展开的菜单 key 集合 */
+const expandedKeys = ref(new Set())
 
-function isLeafActive(child) {
-  return child.route === route.path || (child.aliases || []).includes(route.path)
+function isOpen(menu) {
+  return expandedKeys.value.has(menu.key)
 }
 
-function isActive(menu) {
-  if (menu.route) {
-    return menu.children
-      ? menu.children.some(group => group.children.some(child => isLeafActive(child)))
-      : route.path === menu.route
+function toggleOpen(menu) {
+  const next = new Set(expandedKeys.value)
+  if (next.has(menu.key)) {
+    next.delete(menu.key)
+  } else {
+    next.add(menu.key)
   }
-  return route.name === 'placeholder' && route.params.key === menu.key
+  expandedKeys.value = next
+}
+
+/**
+ * 当前路由命中的第一条菜单链。
+ * 使用 registry 的精确匹配 + aliases，避免 /new/2 前缀误命中 /new/21、/new/22；
+ * 重复挂载的同一路由（如 41 的设置列表/规则配置）只高亮第一条。
+ */
+const activeTrail = computed(() => findMenuPathByRoute(route.path) || [])
+
+function isActive(menu) {
+  if (route.name === 'placeholder' && route.params.key === menu.key) {
+    return true
+  }
+  return activeTrail.value.includes(menu)
 }
 
 function openMenu(menu) {
-  if (menu.children) { expanded.value = expanded.value === menu.key ? null : menu.key; return }
+  if (menu.children) {
+    toggleOpen(menu)
+    return
+  }
+  expandedKeys.value = new Set()
   if (menu.route) {
-    router.push(menu.route)
+    if (route.path !== menu.route) {
+      router.push(menu.route)
+    }
     return
   }
   router.push({ name: 'placeholder', params: { key: menu.key } })
 }
-</script>
 
-<style scoped>
-.sider-menu { min-height: 0; overflow-y: auto; flex-shrink: 1; }
-.sider-menu > .menu-item, .sider-menu .query-submenu { flex: none; }
-.sider-copyright { flex-shrink: 0; padding-top: 16px; }
-.menu-arrow, .group-arrow { transition: transform 0.15s ease; }
-.menu-arrow.expanded, .group-arrow.expanded { transform: rotate(90deg); }
-.query-submenu { background: #1f232e; padding: 4px 0; }
-.query-submenu button {
-  display: block;
-  width: 100%;
-  padding: 10px 10px 10px 36px;
-  text-align: left;
-  border: 0;
-  background: none;
-  color: #c3c8d2;
-  cursor: pointer;
-  font-size: 12px;
+function closeAll(event) {
+  const sider = event.target.closest?.('.sider')
+  if (!sider && expandedKeys.value.size) {
+    expandedKeys.value = new Set()
+  }
 }
-.query-submenu button:hover { background: #262e3d; }
-.query-submenu .task-group { display: flex; justify-content: space-between; align-items: center; }
-.group-arrow { font-size: 18px; line-height: 16px; }
-.task-pages button { padding-left: 44px; line-height: 20px; }
-.task-pages button.selected { color: #409eff; background: #182535; border-right: 3px solid #2b87ff; }
-</style>
+
+onMounted(() => {
+  document.addEventListener('click', closeAll)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', closeAll)
+})
+</script>
