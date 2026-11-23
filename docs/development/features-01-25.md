@@ -246,13 +246,13 @@ src/config/menus.js           # 公共业务菜单树
 | 18 | 自助取数 / 模型全局视图 | 模型列表视图总览 | Z19 | /new/18 | 自验通过（见 [记录](../acceptance/feature-18.md)） |
 | 19 | 自助取数 / 模型全局视图 | 模型卡片视图总览 | Z20 | /new/19 | 自验通过（见 [记录](../acceptance/feature-19.md)） |
 | 20 | 自助取数 / 模型全局视图 | 置顶模型 | Z21 | /new/20 | 自验通过（见 [记录](../acceptance/feature-20.md)） |
-| 21 | 自助取数 / 模型全局视图 | 收藏模型 | Z22 | /new/21 | 待实现 |
-| 22 | 自助取数 / 模型全局视图 | 模型来源查询 | Z23、AA23 | /new/22 | 待实现 |
-| 23 | 自助取数 / 模型全局视图 | 模型来源修改 | Z24、AA24、AB24 | /new/23 | 待实现 |
-| 24 | 自助取数 / 模型全局视图 | 模型来源删除 | Z25 | /new/24 | 待实现 |
-| 25 | 自助取数 / 模型全局视图 | 模型历史版本查询 | Z26、AA26 | /new/25 | 待实现 |
+| 21 | 自助取数 / 模型全局视图 | 收藏模型 | Z22 | /new/21 | 自验通过（见 [记录](../acceptance/feature-21.md)） |
+| 22 | 自助取数 / 模型全局视图 | 模型来源查询 | Z23、AA23 | /new/22 | 自验通过（见 [记录](../acceptance/feature-22.md)） |
+| 23 | 自助取数 / 模型全局视图 | 模型来源修改 | Z24、AA24、AB24 | /new/23 | 自验通过（见 [记录](../acceptance/feature-23.md)） |
+| 24 | 自助取数 / 模型全局视图 | 模型来源删除 | Z25 | /new/24 | 自验通过（见 [记录](../acceptance/feature-24.md)） |
+| 25 | 自助取数 / 模型全局视图 | 模型历史版本查询 | Z26、AA26 | /new/25 | 自验通过（见 [记录](../acceptance/feature-25.md)） |
 
-批次状态：1–15 已通过用户二次检查（用户验收通过）；编号 16 已按用户要求删除（2026-11-23）；17–20 已完成自验，等待本批用户验收；共用外壳改动见“十、规则挂载与优先关系”中的共享契约记录。11 与 14 的源单元格以 registry 为准：11 为 `Sheet!Z12`，14 为 `Sheet!Z15:AB15`。2026-11-23 用户反馈修复后回归：`acceptfix.mjs` 14/14、`check-rm16.mjs` 6/6、11–15 批次 71/71、16–20 批次 48/48（删除前）、navcheck 40/40（删除前）、构建退出码 0。
+批次状态：1–15 已通过用户二次检查（用户验收通过）；编号 16 已按用户要求删除（2026-11-23）；17–20 已完成自验，等待本批用户验收；21–25 已完成自验（21–25 批次自动化 47/47），等待本批用户验收；共用外壳改动见“十、规则挂载与优先关系”中的共享契约记录。11 与 14 的源单元格以 registry 为准：11 为 `Sheet!Z12`，14 为 `Sheet!Z15:AB15`；21–25 的源单元格以工作簿为准：21 `Z22`、22 `Z23:AA23`、23 `Z24:AB24`、24 `Z25`、25 `Z26:AA26`。2026-11-23 用户反馈修复后回归：`acceptfix.mjs` 14/14、`check-rm16.mjs` 6/6、11–15 批次 71/71、16–20 批次 48/48（删除前）、navcheck 40/40（删除前）、构建退出码 0。
 
 2026-11-23 用户反馈修复：编号 03 表格改为 7 列等宽并在 1600×760、1366×768 直接可见“查看SQL”列；侧栏超长菜单不再压缩行高。复核：`verify-fix.mjs` 10/10、`verify03fix.mjs` 10/10、navcheck 17/17、11–15 批次 71/71、构建退出码 0、`git diff --check` 退出码 0。证据见 `docs/acceptance/feature-03.md` 末尾记录。
 
@@ -270,6 +270,7 @@ AGENTS.md 与 CLAUDE.md 都应链接本文件，不再各复制一份规范。�
 | 2026-11-23 | 菜单新增：上传任务→文档自动化拆分（/new/16）、文件内容预览（/new/17）；数据模型准备→模型列表总览（/new/18）、模型卡片总览（/new/19）、置顶模型（/new/20）。侧栏标签为防换行做缩写，registry 功能名称保留“文档内容自动化拆分/模型列表视图总览/模型卡片视图总览”。面包屑按素材：16 末级“文件上传浏览”，18–20 末级“数据模型管理” | `src/config/menus.js`、`src/views/newFeatures/registry-01-25.js` | 侧栏宽度不足导致完整名称换行；素材面包屑末级与菜单叶子标签不同 | 合并时以该菜单树与面包屑为准；如需恢复完整标签须先处理侧栏换行；不得为单页修改 TopBar/AppLayout；改动后跑 11–20 导航检查 |
 | 2026-11-23 | 模型页面合并为用户要求的单页状态（覆盖上条中 18/19/20 的菜单新增）：撤销侧栏“模型列表总览/模型卡片总览/置顶模型”三个叶子，18/19/20 改为“数据模型管理”（/new/11）页内列表/卡片/置顶状态；/new/18–20 保留直达地址，并在 `SideNav` 以路由别名高亮“数据模型管理”。统一实现为 `ModelManagement.vue`（删除 `ModelOverview.vue`）；模型数据统一以 18/19/20 素材的 20 行 `overviewRows` 为基线（编号 12 新增后 21 行，刷新还原 20 行）。追加弹窗抽为共享组件 `AppendUploadDialog.vue`，编号 15 与 16 共用；编号 15 的“追加/新建导入”不再提示不可用 | `src/config/menus.js`、`src/layout/SideNav.vue`、`src/views/newFeatures/ModelManagement.vue`、`src/views/newFeatures/ModelOverview.vue`（删除）、`src/views/newFeatures/registry-01-25.js`、`src/data/modelOverview.js`、`src/data/modelCatalog.js`、`src/views/newFeatures/AppendUploadDialog.vue`（新增）、`src/views/newFeatures/UploadBrowse.vue`、`src/views/newFeatures/UploadAppend.vue` | 用户反馈：模型卡片/列表总览不应是左侧新增功能，应在“数据模型管理”页面用红框处的视图按钮切换；文档自动化拆分素材中的追加弹窗在编号 15 点击“追加”却提示不可用 | 合并时保持单页状态与别名高亮；18–20 不得再新增菜单叶子；修改共享追加弹窗须同时回归 15/16；改动后跑 acceptfix 14 项、11–15 71/71、16–20 48/48、navcheck 40 项 |
 | 2026-11-23 | 删除编号 16“文档自动化拆分”功能（覆盖上条中“15 与 16 共用追加弹窗”的页面部分）：移除侧栏“上传任务→文档自动化拆分”叶子及 `/new/16` 的视图/面包屑/元信息映射；原 `UploadAppend.vue`、`uploadAppend.js` 移出项目，备份于项目外 `C:\Users\Administrator\chatgpt-migration\removed-feature16\`；追加弹窗 `AppendUploadDialog.vue` 保留，供编号 15“文件上传浏览”使用 | `src/config/menus.js`、`src/views/newFeatures/registry-01-25.js`、`src/views/newFeatures/UploadAppend.vue`（移除）、`src/data/uploadAppend.js`（移除） | 用户 2026-11-23 查看侧栏截图后明确“这个功能就可以删除了” | 合并时不要恢复 `/new/16` 菜单与页面；追加能力通过编号 15 使用；改动后确认“上传任务”仅剩“文件上传浏览/文件内容预览”，并回归编号 15 追加流程与编号 17 |
+| 2026-11-23 | 菜单新增：自助取数 → 自助取数制作 → 自助取数制作（/new/21，2026-11-23 用户反馈由“我的收藏模型”改名，与素材面包屑一致）；业务数据管理 → 数据模型准备 → 模型来源查询（/new/22）、模型历史版本查询（/new/25）；数据模型管理别名增加 /new/23、/new/24（模型来源修改/删除，不新增侧栏叶子）。新增 `FavoriteModels.vue`、`ModelSourceQuery.vue`、`ModelVersionHistory.vue` 与数据模块 `favoriteModels.js`、`modelSource.js`；`ModelCreate.vue` 增加编号 23 编辑模式（`/new/23?row=`，保存文案“您确定需要保存修改吗？”，原地更新 `overviewRows`）；`ModelManagement.vue` 增加行内“修改”入口、自定义删除确认弹窗与 /new/24 直达态。面包屑：21 末级“自助取数制作”，22“模型来源查询”，23/24“数据模型管理”，25“模型历史版本查询” | `src/config/menus.js`、`src/views/newFeatures/registry-01-25.js`、`src/views/newFeatures/FavoriteModels.vue`（新增）、`src/views/newFeatures/ModelSourceQuery.vue`（新增）、`src/views/newFeatures/ModelVersionHistory.vue`（新增）、`src/views/newFeatures/ModelCreate.vue`、`src/views/newFeatures/ModelManagement.vue`、`src/data/favoriteModels.js`（新增）、`src/data/modelSource.js`（新增） | 用户要求继续完成编号 21–25，按素材实现收藏模型、模型来源查询/修改/删除与历史版本查询 | 合并时 23/24 保持别名地址、不新增侧栏叶子；修改 ModelCreate/ModelManagement 须回归 11/12/18/19/20 与本批 47 项；不得为单页修改 TopBar/AppLayout/全局 CSS |
 
 ## 第一批用户反馈修正规则
 

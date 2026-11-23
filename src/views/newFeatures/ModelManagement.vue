@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { modelCities } from '../../data/modelCatalog.js'
 import { overviewRows, pinnedModel } from '../../data/modelOverview.js'
 
@@ -18,6 +18,12 @@ const view = ref(no === 19 ? 'cards' : 'list')
 const selected = ref([])
 const detail = ref(null)
 const doc = ref(false)
+const pendingId = ref(no === 24 ? 'MO15' : null)
+const deleteTarget = computed(() => {
+  if (!pendingId.value) return null
+  if (pendingId.value === pinnedModel.id) return pinnedModel
+  return overviewRows.find((row) => row.id === pendingId.value) || null
+})
 const pinnedId = ref(no === 20 ? pinnedModel.id : null)
 
 const visibleRows = computed(() => {
@@ -52,10 +58,11 @@ function togglePin(row) {
   selected.value = []
   ElMessage.success(pinnedId.value ? '置顶成功' : '已取消置顶')
 }
-async function remove(row) {
-  try {
-    await ElMessageBox.confirm('确定删除该数据模型吗？', '询问', { confirmButtonText: '确定', cancelButtonText: '取消' })
-  } catch { return }
+function remove(row) { pendingId.value = row.id }
+function cancelDelete() { pendingId.value = null }
+function confirmDelete() {
+  const row = deleteTarget.value
+  if (!row) return
   if (row.id === pinnedModel.id) {
     pinnedId.value = null
   } else {
@@ -63,8 +70,10 @@ async function remove(row) {
     if (index >= 0) overviewRows.splice(index, 1)
   }
   selected.value = selected.value.filter((id) => id !== row.id)
+  pendingId.value = null
   ElMessage.success('删除成功')
 }
+function edit(row) { router.push({ path: '/new/23', query: { row: row.id } }) }
 function unavailable(text) { ElMessage.info(text + '暂不可用') }
 </script>
 
@@ -118,7 +127,7 @@ function unavailable(text) { ElMessage.info(text + '暂不可用') }
             <td>{{ row.publisher }}</td>
             <td>{{ row.owner }}</td>
             <td>{{ row.status }}</td>
-            <td class="nf-ops"><button @click="detail = row">查看</button> / <button @click="unavailable('授权')">授权</button> / <button @click="unavailable('修改')">修改</button> / <button @click="remove(row)">删除</button></td>
+            <td class="nf-ops"><button @click="detail = row">查看</button> / <button @click="unavailable('授权')">授权</button> / <button @click="edit(row)">修改</button> / <button @click="remove(row)">删除</button></td>
           </tr>
           <tr v-if="!rows.length"><td colspan="7">暂无数据</td></tr>
         </tbody>
@@ -160,6 +169,22 @@ function unavailable(text) { ElMessage.info(text + '暂不可用') }
       <p>3. 点击“添加数据模型”按数据库表新增、字段配置、预览三步完成建模。</p>
       <p>4. 发布后的模型可在自助取数中直接使用，删除前请确认无任务引用。</p>
     </el-dialog>
+
+    <Teleport to="body">
+      <div v-if="deleteTarget" class="nf-delete-mask">
+        <section class="nf-delete-dialog" role="dialog" aria-modal="true" aria-labelledby="nf-delete-title">
+          <h2 id="nf-delete-title">提示</h2>
+          <div class="nf-delete-body">
+            <span class="nf-delete-icon" aria-hidden="true">!</span>
+            <p>您确定需要删除“{{ deleteTarget.name }}”直连表数据吗？删除之后，基于该表做的任务将无法正常运行</p>
+          </div>
+          <footer>
+            <button type="button" class="nf-delete-cancel" @click="cancelDelete">取消</button>
+            <button type="button" class="nf-delete-ok" @click="confirmDelete">确定</button>
+          </footer>
+        </section>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -225,5 +250,21 @@ function unavailable(text) { ElMessage.info(text + '暂不可用') }
   .nf-options { overflow: auto; }
   .nf-option-row { min-width: 900px; }
   .nf-model-cards { grid-template-columns: minmax(0, 1fr); }
+}
+.nf-delete-mask { position: fixed; inset: 0; z-index: 3000; background: rgba(0, 0, 0, 0.35); }
+.nf-delete-dialog { position: fixed; top: 33px; left: 50%; transform: translateX(-50%); width: 420px; max-width: calc(100vw - 32px); background: #fff; border-radius: 4px; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18); overflow: hidden; color: #333; font-size: 14px; }
+.nf-delete-dialog h2 { display: flex; align-items: center; justify-content: center; height: 59px; margin: 0; border-bottom: 1px solid #eee; font-size: 18px; font-weight: 600; color: #303133; }
+.nf-delete-body { display: flex; gap: 30px; padding: 26px 25px 22px 44px; }
+.nf-delete-icon { flex: none; width: 42px; height: 42px; border-radius: 50%; background: #ffd60a; color: #fff; font-size: 28px; font-weight: 600; line-height: 42px; text-align: center; }
+.nf-delete-body p { flex: 1; margin: 0; line-height: 24px; font-size: 14px; color: #333; }
+.nf-delete-dialog footer { display: flex; align-items: center; justify-content: flex-end; gap: 26px; padding: 0 24px 20px; }
+.nf-delete-dialog footer button { height: 36px; border: 0; font: inherit; cursor: pointer; }
+.nf-delete-cancel { padding: 0 8px; background: none; color: #606266; }
+.nf-delete-ok { min-width: 62px; padding: 0 18px; border-radius: 18px; background: #2f7cf6; color: #fff; }
+.nf-delete-cancel:hover { color: #1677ff; }
+.nf-delete-ok:hover { background: #4096ff; }
+@media (max-width: 520px) {
+  .nf-delete-body { gap: 16px; padding: 20px 18px 18px 20px; }
+  .nf-delete-dialog footer { gap: 12px; padding: 0 18px 16px; }
 }
 </style>

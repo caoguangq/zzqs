@@ -1,21 +1,27 @@
 <script setup>
 import { computed, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { addModel } from '../../data/modelCatalog.js'
+import { overviewRows } from '../../data/modelOverview.js'
 
+const route = useRoute()
 const router = useRouter()
+const isEdit = Number(route.params.no) === 23
+const editRow = isEdit
+  ? overviewRows.find((row) => row.id === String(route.query.row || '')) || overviewRows.find((row) => row.id === 'MO15') || null
+  : null
 const step = ref(1)
 const form = reactive({
   database: '地市集市新库',
   table: 'mart796.dim_2026cunl_zfkr_23lei_r',
-  name: '运维twl',
+  name: editRow ? editRow.name : '运维twl',
   storage: '其他',
   sensitive: '涉敏',
   shard: '不是分表',
-  owner: 'crm运维平台(CRMOP)',
+  owner: editRow ? (editRow.id === 'MO15' ? 'crm运维平台(CRMOP)' : editRow.owner) : 'crm运维平台(CRMOP)',
   business: '吉安-存量运营类',
-  updated: '2026-03-14 00:00:00',
+  updated: editRow ? editRow.updated : '2026-03-14 00:00:00',
   summary: '否',
   customer: '否',
   description: '',
@@ -93,9 +99,14 @@ function setPage(value) {
 }
 async function save() {
   try {
-    await ElMessageBox.confirm('您确定需要保存数据吗？', '数据保存', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', showClose: false, customClass: 'nf-save-confirm' })
+    await ElMessageBox.confirm(isEdit ? '您确定需要保存修改吗？' : '您确定需要保存数据吗？', '数据保存', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', showClose: false, customClass: 'nf-save-confirm' })
   } catch { return }
-  addModel({ name: form.name, updated: form.updated, publisher: '唐雯丽', owner: form.owner.replace(/[（(][^）)]*[）)]/g, '') })
+  const owner = form.owner.replace(/[（(][^）)]*[）)]/g, '')
+  if (editRow) {
+    Object.assign(editRow, { name: form.name, updated: form.updated, publisher: '唐雯丽', owner })
+  } else {
+    addModel({ name: form.name, updated: form.updated, publisher: '唐雯丽', owner })
+  }
   ElMessage.success('保存成功')
   router.push('/new/11')
 }
