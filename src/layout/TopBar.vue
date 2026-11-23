@@ -20,6 +20,7 @@
           <path d="M10 2.8a4.6 4.6 0 0 0-4.6 4.6c0 4.2-1.7 5.5-1.7 5.5h12.6s-1.7-1.3-1.7-5.5A4.6 4.6 0 0 0 10 2.8z" />
           <path d="M8.4 15.7a1.8 1.8 0 0 0 3.2 0" />
         </svg>
+        <span v-if="unreadCount" class="bell-badge">{{ unreadCount }}</span>
       </button>
 
       <span class="topbar-divider"></span>
@@ -50,6 +51,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { findMenu } from '../config/menus.js'
+import { manualBreadcrumb } from '../config/breadcrumb.js'
 
 defineEmits(['toggle'])
 
@@ -57,12 +59,18 @@ const route = useRoute()
 const userName = ref('唐...')
 
 const breadcrumb = computed(() => {
+  if (manualBreadcrumb.value) {
+    return manualBreadcrumb.value
+  }
   if (route.meta.breadcrumb) {
     return route.meta.breadcrumb
   }
   const menu = findMenu(route.params.key)
   return menu ? [menu.label] : ['首页']
 })
+
+/** 35 模型异常消息提醒：截图里铃铛带 5 条未读红点 */
+const unreadCount = computed(() => (String(route.params?.no || '') === '35' ? 5 : 0))
 
 onMounted(async () => {
   try {

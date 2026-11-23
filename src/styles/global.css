@@ -61,6 +61,10 @@ a {
   padding: 33px 43px 40px 31px;
 }
 
+.app-content-plain {
+  background: #ffffff;
+}
+
 .page {
   width: 100%;
   max-width: 1760px;
@@ -77,7 +81,6 @@ a {
   width: var(--sider-width);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   background: var(--sider-bg);
   transition: width 0.2s ease;
 }
@@ -145,6 +148,117 @@ a {
   width: 14px;
   height: 14px;
   color: #6f7686;
+  transition: transform 0.2s ease;
+}
+
+.menu-arrow.rotated {
+  transform: rotate(90deg);
+}
+
+/* ---------- 展开的子菜单（右侧浮层） ---------- */
+.menu-entry {
+  position: relative;
+}
+
+.menu-flyout {
+  position: absolute;
+  left: calc(var(--sider-width) - 4px);
+  top: 0;
+  z-index: 30;
+  display: none;
+  min-width: 186px;
+  padding: 8px;
+  border-radius: 4px;
+  background: #2b303d;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.32);
+}
+
+.menu-entry:hover > .menu-flyout,
+.menu-flyout.is-open {
+  display: block;
+}
+
+/* 三级功能分组较多时（业务数据管理 26-51），用双列浮层避免超出屏幕 */
+.menu-flyout.is-wide {
+  width: max-content;
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+  grid-template-columns: repeat(2, 210px);
+  column-gap: 10px;
+  align-content: start;
+}
+
+.menu-entry:hover > .menu-flyout.is-wide,
+.menu-flyout.is-wide.is-open {
+  display: grid;
+}
+
+.menu-entry:hover > .menu-item .menu-arrow {
+  transform: rotate(90deg);
+}
+
+.flyout-group + .flyout-group {
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.flyout-title {
+  display: block;
+  padding: 7px 10px 5px;
+  color: #8f97a6;
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.flyout-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.flyout-leaf,
+.flyout-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: #cfd4dd;
+  font-size: 13px;
+  line-height: 18px;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.flyout-leaf:hover,
+.flyout-link:hover {
+  background: #353b4a;
+  color: #ffffff;
+}
+
+.flyout-leaf.active,
+.flyout-link.active {
+  background: rgba(43, 135, 255, 0.16);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.flyout-leaf.active::before,
+.flyout-link.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 2px;
+  background: #2b87ff;
 }
 
 .menu-item:hover {
@@ -280,6 +394,26 @@ a {
   background: transparent;
   color: #5f6b7c;
   cursor: pointer;
+}
+
+.bell-btn {
+  position: relative;
+}
+
+.bell-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #f5222d;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 16px;
+  text-align: center;
 }
 
 .topbar-divider {
