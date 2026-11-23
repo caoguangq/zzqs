@@ -795,6 +795,27 @@ onMounted(() => {
     }
   }
 })
+
+/**
+ * 26/27/28 合并为一个菜单入口后，三个编号共用同一个组件实例；
+ * 在菜单/路由之间切换时需要先清掉上一个编号留下的弹窗，否则弹窗会带到下一个页面。
+ */
+watch(featureNo, (no) => {
+  formVisible.value = false
+  editVisible.value = false
+  deleteVisible.value = false
+  deleteResultVisible.value = false
+  detailVisible.value = false
+  resultVisible.value = false
+  if (no === 27) {
+    const row = versions.value.find((item) => item.id === 'v-share-4')
+    if (row) openEdit(row)
+  }
+  if (no === 28) {
+    const row = versions.value.find((item) => item.id === 'v-share-2')
+    if (row) openDelete(row)
+  }
+})
 </script>
 
 <style scoped>

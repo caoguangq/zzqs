@@ -173,28 +173,23 @@ a {
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.32);
 }
 
-.menu-entry:hover > .menu-flyout,
 .menu-flyout.is-open {
   display: block;
 }
 
 /* 三级功能分组较多时（业务数据管理 26-51），用双列浮层避免超出屏幕 */
 .menu-flyout.is-wide {
-  width: max-content;
+  width: 446px;
   max-height: calc(100vh - 280px);
+  overflow-x: hidden;
   overflow-y: auto;
-  grid-template-columns: repeat(2, 210px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: 10px;
   align-content: start;
 }
 
-.menu-entry:hover > .menu-flyout.is-wide,
 .menu-flyout.is-wide.is-open {
   display: grid;
-}
-
-.menu-entry:hover > .menu-item .menu-arrow {
-  transform: rotate(90deg);
 }
 
 .flyout-group + .flyout-group {

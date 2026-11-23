@@ -1,6 +1,15 @@
 <template>
   <div class="nf-page nf-page-compact">
     <div class="nf-toolbar nf-toolbar-top">
+      <button type="button" class="nf-pill-btn nf-pill-plain" @click="openView()">
+        异常数据查看
+      </button>
+      <button type="button" class="nf-pill-btn nf-pill-plain" @click="openPeriod()">
+        账期异常查询
+      </button>
+      <button type="button" class="nf-pill-btn nf-pill-plain" @click="openNotice()">
+        异常消息提醒
+      </button>
       <button type="button" class="nf-pill-btn" @click="createTask">
         新建任务
         <span class="nf-pill-icon">
@@ -272,7 +281,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
@@ -416,6 +425,16 @@ function openView() {
   viewVisible.value = true
 }
 
+function openPeriod() {
+  queryPeriod()
+  periodVisible.value = true
+}
+
+function openNotice() {
+  noticeIndex.value = 0
+  noticeVisible.value = true
+}
+
 function queryView() {
   if (!viewForm.location.trim()) {
     ElMessage.warning('请输入模型表存储位置')
@@ -441,13 +460,24 @@ function createTask() {
 }
 
 onMounted(() => {
-  if (featureNo.value === 31) {
-    viewVisible.value = true
-  }
+  /* 31 是合并后的菜单入口，页面保持列表状态；32/35 走直接路由时仍自动打开对应弹窗，便于逐项核对 */
   if (featureNo.value === 32) {
     periodVisible.value = true
   }
   if (featureNo.value === 35) {
+    noticeVisible.value = true
+  }
+})
+
+/** 31/32/35 共用同一个组件实例，切换编号时先关掉上一个编号的弹窗 */
+watch(featureNo, (no) => {
+  viewVisible.value = false
+  periodVisible.value = false
+  noticeVisible.value = false
+  if (no === 32) {
+    periodVisible.value = true
+  }
+  if (no === 35) {
     noticeVisible.value = true
   }
 })
@@ -456,6 +486,22 @@ onMounted(() => {
 <style scoped>
 .nf-toolbar-top {
   padding: 0 0 12px;
+}
+
+/* 合并后的页面按钮：31/32/35 三个入口并排，主操作“新建任务”保持蓝色 */
+.nf-pill-btn.nf-pill-plain {
+  height: 36px;
+  padding: 0 18px;
+  border: 1px solid #cfe0f5;
+  background: #ffffff;
+  color: #1677ff;
+  font-size: 13px;
+}
+
+.nf-pill-btn.nf-pill-plain:hover {
+  border-color: #91caff;
+  background: #f0f7ff;
+  color: #1677ff;
 }
 
 .nf-dialog-center-title {

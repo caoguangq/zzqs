@@ -7,7 +7,13 @@
     </div>
 
     <nav class="sider-menu">
-      <div v-for="menu in menus" :key="menu.key" class="menu-entry">
+      <div
+        v-for="menu in menus"
+        :key="menu.key"
+        class="menu-entry"
+        @mouseenter="handleMenuEnter(menu)"
+        @mouseleave="handleMenuLeave(menu)"
+      >
         <button
           type="button"
           class="menu-item"
@@ -35,7 +41,7 @@
           </svg>
         </button>
 
-        <!-- 二级/三级菜单：侧栏只有 159px，用右侧浮层避免文字被截断（悬停或点击展开） -->
+        <!-- 二级/三级菜单：侧栏只有 159px，用右侧浮层避免文字被截断（悬停或点击展开，同一时间只开一个） -->
         <div
           v-if="menu.children && !collapsed"
           class="menu-flyout"
@@ -47,7 +53,7 @@
               type="button"
               class="flyout-link"
               :class="{ active: isActive(child) }"
-              @click="openMenu(child)"
+              @click="openMenu(child, menu)"
             >
               {{ child.label }}
             </button>
@@ -61,7 +67,7 @@
                 class="flyout-leaf"
                 :class="{ active: isActive(leaf) }"
                 :aria-current="isActive(leaf) ? 'page' : undefined"
-                @click="openMenu(leaf)"
+                @click="openMenu(leaf, menu)"
               >
                 {{ leaf.label }}
               </button>
@@ -76,7 +82,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import MenuIcon from '../components/MenuIcon.vue'
 import { findMenuPathByRoute, menus } from '../config/menus.js'
@@ -91,21 +97,53 @@ defineProps({
 const route = useRoute()
 const router = useRouter()
 
-/** 展开的菜单 key 集合 */
-const expandedKeys = ref(new Set())
+/** 当前显示的浮层 key；同一时间只允许一个浮层，避免多个菜单的浮层叠在一起 */
+const openKey = ref(null)
+/** 通过点击固定展开的菜单 key；仅悬停展开时为空 */
+const pinnedKey = ref(null)
+/** 刚点击收起的菜单；本次停留期间不再被悬停重新展开，鼠标移出后解除 */
+const suppressedKey = ref(null)
 
 function isOpen(menu) {
-  return expandedKeys.value.has(menu.key)
+  return openKey.value === menu.key
 }
 
-function toggleOpen(menu) {
-  const next = new Set(expandedKeys.value)
-  if (next.has(menu.key)) {
-    next.delete(menu.key)
-  } else {
-    next.add(menu.key)
+/** 悬停到顶部菜单：同一时间只保留一个浮层；刚点击收起的那一项等鼠标移出后再响应 */
+function handleMenuEnter(menu) {
+  if (suppressedKey.value === menu.key) return
+  if (openKey.value !== menu.key) {
+    openKey.value = menu.key
+    pinnedKey.value = null
   }
-  expandedKeys.value = next
+}
+
+function handleMenuLeave(menu) {
+  if (suppressedKey.value === menu.key) {
+    suppressedKey.value = null
+  }
+  if (pinnedKey.value === menu.key) return
+  if (openKey.value === menu.key) {
+    openKey.value = null
+  }
+}
+
+/** 点击顶部菜单：第一次固定展开，再次点击立即收起 */
+function toggleOpen(menu) {
+  if (openKey.value === menu.key && pinnedKey.value === menu.key) {
+    openKey.value = null
+    pinnedKey.value = null
+    suppressedKey.value = menu.key
+    return
+  }
+  openKey.value = menu.key
+  pinnedKey.value = menu.key
+  suppressedKey.value = null
+}
+
+function closeFlyout(menu) {
+  openKey.value = null
+  pinnedKey.value = null
+  suppressedKey.value = menu?.key ?? null
 }
 
 /**
@@ -122,12 +160,12 @@ function isActive(menu) {
   return activeTrail.value.includes(menu)
 }
 
-function openMenu(menu) {
+function openMenu(menu, parent) {
   if (menu.children) {
     toggleOpen(menu)
     return
   }
-  expandedKeys.value = new Set()
+  closeFlyout(parent)
   if (menu.route) {
     if (route.path !== menu.route) {
       router.push(menu.route)
@@ -139,10 +177,22 @@ function openMenu(menu) {
 
 function closeAll(event) {
   const sider = event.target.closest?.('.sider')
-  if (!sider && expandedKeys.value.size) {
-    expandedKeys.value = new Set()
+  if (!sider && openKey.value) {
+    openKey.value = null
+    pinnedKey.value = null
+    suppressedKey.value = null
   }
 }
+
+/** 路由变化（含浏览器前进/后退）时收起浮层，避免浮层停在旧菜单上 */
+watch(
+  () => route.fullPath,
+  () => {
+    openKey.value = null
+    pinnedKey.value = null
+    suppressedKey.value = null
+  }
+)
 
 onMounted(() => {
   document.addEventListener('click', closeAll)

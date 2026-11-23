@@ -15,16 +15,37 @@ import { featureGroups } from '../views/newFeatures/registry.js'
  * 26-51 按三级功能分组：模型全局视图 / 模型配置优化升级 / 权限管理 / 国产化对接改造。
  * 41 号只保留「参数配置 → 脱敏设置管理」入口，不再重复出现在“国产化对接改造”下。
  */
+/**
+ * 以下功能共用同一个页面，页面里通过按钮/行操作切换具体功能，
+ * 因此左侧每组只保留一个菜单入口，其余编号通过 aliases 命中并高亮同一个菜单：
+ * - 26/27/28 模型历史版本新增/修改/删除 → 模型历史版本管理
+ * - 29/30 模型顺序结构升级/降级 → 模型顺序结构管理
+ * - 31/32/35 模型元数据异常/账期异常/异常消息提醒 → 模型扫描管理
+ * - 38/39 负责人关联数据集新增/撤销赋权 → 负责人关联数据集赋权
+ * 所有编号对应的 /new/:no 路由仍然可用，便于逐项核对。
+ */
+const mergedFeatureMenus = new Map([
+  [26, { label: '模型历史版本管理', aliases: ['/new/27', '/new/28'] }],
+  [29, { label: '模型顺序结构管理', aliases: ['/new/30'] }],
+  [31, { label: '模型扫描管理', aliases: ['/new/32', '/new/35'] }],
+  [38, { label: '负责人关联数据集赋权', aliases: ['/new/39'] }]
+])
+const hiddenFeatureMenuNos = new Set([27, 28, 30, 32, 35, 39])
+
 const featureMenuGroups = featureGroups.map((group) => ({
   key: `feature-${group.key}`,
   label: group.label,
   children: group.items
-    .filter((item) => item.no !== 41)
-    .map((item) => ({
-      key: `feature-${item.no}`,
-      label: item.title,
-      route: `/new/${item.no}`
-    }))
+    .filter((item) => item.no !== 41 && !hiddenFeatureMenuNos.has(item.no))
+    .map((item) => {
+      const merged = mergedFeatureMenus.get(item.no)
+      return {
+        key: `feature-${item.no}`,
+        label: merged?.label ?? item.title,
+        route: `/new/${item.no}`,
+        ...(merged?.aliases ? { aliases: merged.aliases } : {})
+      }
+    })
 }))
 
 export const menus = [

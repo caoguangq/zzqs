@@ -365,7 +365,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -689,8 +689,23 @@ function authorizeRow() {
 }
 
 onMounted(() => {
-  if (featureNo.value === 38 || featureNo.value === 39) {
+  /* 38 是合并后的菜单入口，进入后保持列表状态；39 走直接路由时自动打开撤销赋权弹窗，便于逐项核对 */
+  if (featureNo.value === 39) {
     initUserSelection(featureNo.value)
+    userSelectVisible.value = true
+  }
+})
+
+/**
+ * 29/30 与 38/39 共用同一个组件实例，菜单/路由切换时先恢复对应编号的初始状态，
+ * 避免上一个编号的赋权弹窗或排序结果带到下一个页面。
+ */
+watch(featureNo, (no) => {
+  userSelectVisible.value = false
+  saveConfirmVisible.value = false
+  rows.value = initialRows()
+  if (no === 39) {
+    initUserSelection(no)
     userSelectVisible.value = true
   }
 })
