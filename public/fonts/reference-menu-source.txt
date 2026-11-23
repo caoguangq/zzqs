@@ -1,0 +1,2 @@
+Copied without alteration from inline WOFF2 in DTS/dts-report-web/src/main/resources/static/bace/css/common.css
+SHA256 3f5b1f93f6018d4a1d7202a1ff5bdc591621a947c37964acbf1f34429a79ae5d

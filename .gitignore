@@ -2,6 +2,7 @@ node_modules/
 dist/
 .DS_Store
 *.log
+.idea/
 
 # 本地临时素材：参考图导出、对比截图、一次性测量/截图脚本（不提交）
 _tmp_*/

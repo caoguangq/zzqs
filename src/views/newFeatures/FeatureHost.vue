@@ -1,5 +1,5 @@
 <template>
-  <component :is="view" v-if="view" />
+  <component :is="view" v-if="view" :key="route.params.no" />
 
   <div v-else class="nf-page">
     <section class="nf-card nf-pending-card">
@@ -9,17 +9,29 @@
         <router-link class="nf-link" to="/new">新开发功能索引</router-link>
         看看已经做好的部分。
       </p>
-      <p v-else>请检查地址中的编号，范围是 26-51。</p>
+      <p v-else>请检查地址中的编号，范围是 1-51。</p>
     </section>
   </div>
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent } from 'vue'
+import { computed, defineAsyncComponent, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { findFeature, loadFeatureView } from './registry.js'
+import { manualBreadcrumb } from '../../config/breadcrumb.js'
+import { resetPageBreadcrumb } from '../../config/pageBreadcrumb.js'
 
 const route = useRoute()
+
+// 切换编号时清掉上一个页面临时覆盖的面包屑，避免顶栏显示残留内容
+watch(
+  () => route.params.no,
+  () => {
+    resetPageBreadcrumb()
+    manualBreadcrumb.value = null
+  },
+  { immediate: true }
+)
 
 const feature = computed(() => findFeature(route.params.no))
 

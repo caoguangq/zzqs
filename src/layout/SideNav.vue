@@ -55,7 +55,7 @@
             <div v-if="child.children" class="flyout-list">
               <button
                 v-for="leaf in child.children"
-                :key="leaf.key"
+                :key="leaf.key || leaf.route"
                 type="button"
                 class="flyout-leaf"
                 :class="{ active: isActive(leaf) }"
@@ -86,11 +86,11 @@ defineProps({
   }
 })
 
-const route = useRoute()
-const router = useRouter()
-
 /** 展开的菜单 key 集合 */
 const expandedKeys = ref(new Set())
+
+const route = useRoute()
+const router = useRouter()
 
 function isOpen(menu) {
   return expandedKeys.value.has(menu.key)
@@ -106,20 +106,11 @@ function toggleOpen(menu) {
   expandedKeys.value = next
 }
 
-/** 当前路由命中的第一条菜单链，重复挂载的同一路由只高亮第一条 */
+/** 当前路由命中的第一条菜单链（含 aliases），重复挂载的同一路由只高亮第一条 */
 const activeTrail = computed(() => findMenuPathByRoute(route.path) || [])
 
 function isActive(menu) {
-  if (menu.children) {
-    return activeTrail.value.includes(menu)
-  }
-  if (!menu.route) {
-    return false
-  }
-  if (menu.route.startsWith('/query')) {
-    return route.path.startsWith('/query')
-  }
-  return route.path === menu.route
+  return activeTrail.value.includes(menu)
 }
 
 function openMenu(menu) {
