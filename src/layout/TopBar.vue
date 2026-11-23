@@ -50,6 +50,8 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { findMenu } from '../config/menus.js'
+import { pageBreadcrumb } from '../config/pageBreadcrumb.js'
+import { featureBreadcrumbs } from '../views/newFeatures/registry.js'
 
 defineEmits(['toggle'])
 
@@ -57,6 +59,10 @@ const route = useRoute()
 const userName = ref('唐...')
 
 const breadcrumb = computed(() => {
+  if (route.params.no) {
+    if (pageBreadcrumb.value) return pageBreadcrumb.value
+    if (featureBreadcrumbs[route.params.no]) return featureBreadcrumbs[route.params.no]
+  }
   if (route.meta.breadcrumb) {
     return route.meta.breadcrumb
   }

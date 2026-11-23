@@ -2,8 +2,10 @@
 import { computed, defineAsyncComponent, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { featureViews, featureBreadcrumbs } from './registry.js'
+import { resetPageBreadcrumb } from '../../config/pageBreadcrumb.js'
 const route = useRoute()
 watch(() => route.params.no, (no) => {
+  resetPageBreadcrumb()
   route.meta.breadcrumb = featureBreadcrumbs[no] || ['功能未实现']
 }, { immediate: true })
 const view = computed(() => featureViews[route.params.no] ? defineAsyncComponent(featureViews[route.params.no]) : null)

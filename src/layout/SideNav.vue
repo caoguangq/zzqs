@@ -24,11 +24,11 @@
       </button>
       <div v-if="menu.children && expanded === menu.key && !collapsed" class="query-submenu">
         <div v-for="group in menu.children" :key="group.key">
-          <button class="task-group" :class="{ selected: group.children.some(child => child.route === route.path) }" :aria-expanded="tasksExpanded === group.key" @click="tasksExpanded = tasksExpanded === group.key ? null : group.key">
+          <button class="task-group" :class="{ selected: group.children.some(child => isLeafActive(child)) }" :aria-expanded="tasksExpanded === group.key" @click="tasksExpanded = tasksExpanded === group.key ? null : group.key">
             <span>{{ group.label }}</span><span class="group-arrow" :class="{ expanded: tasksExpanded === group.key }">›</span>
           </button>
           <div v-if="tasksExpanded === group.key" class="task-pages">
-            <button v-for="child in group.children" :key="child.route" :class="{ selected: route.path === child.route }" :aria-current="route.path === child.route ? 'page' : undefined" @click="router.push(child.route)">{{ child.label }}</button>
+            <button v-for="child in group.children" :key="child.route" :class="{ selected: isLeafActive(child) }" :aria-current="isLeafActive(child) ? 'page' : undefined" @click="router.push(child.route)">{{ child.label }}</button>
           </div>
         </div>
       </div>
@@ -59,15 +59,19 @@ const router = useRouter()
 
 watch(() => route.path, (path) => {
   for (const menu of menus) {
-    const group = menu.children?.find(group => group.children.some(child => child.route === path))
+    const group = menu.children?.find(group => group.children.some(child => isLeafActive(child)))
     if (group) { expanded.value = menu.key; tasksExpanded.value = group.key; return }
   }
 }, { immediate: true })
 
+function isLeafActive(child) {
+  return child.route === route.path || (child.aliases || []).includes(route.path)
+}
+
 function isActive(menu) {
   if (menu.route) {
     return menu.children
-      ? menu.children.some(group => group.children.some(child => child.route === route.path))
+      ? menu.children.some(group => group.children.some(child => isLeafActive(child)))
       : route.path === menu.route
   }
   return route.name === 'placeholder' && route.params.key === menu.key
@@ -85,6 +89,7 @@ function openMenu(menu) {
 
 <style scoped>
 .sider-menu { min-height: 0; overflow-y: auto; flex-shrink: 1; }
+.sider-menu > .menu-item, .sider-menu .query-submenu { flex: none; }
 .sider-copyright { flex-shrink: 0; padding-top: 16px; }
 .menu-arrow, .group-arrow { transition: transform 0.15s ease; }
 .menu-arrow.expanded, .group-arrow.expanded { transform: rotate(90deg); }
