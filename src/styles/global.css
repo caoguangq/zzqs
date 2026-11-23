@@ -171,30 +171,27 @@ a {
   border-radius: 4px;
   background: #2b303d;
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.32);
-}
-
-.menu-entry:hover > .menu-flyout,
-.menu-flyout.is-open {
-  display: block;
-}
-
-/* 三级功能分组较多时（业务数据管理 26-51），用双列浮层避免超出屏幕 */
-.menu-flyout.is-wide {
-  width: max-content;
-  max-height: calc(100vh - 280px);
   overflow-y: auto;
-  grid-template-columns: repeat(2, 210px);
-  column-gap: 10px;
-  align-content: start;
+  overflow-x: hidden;
 }
 
-.menu-entry:hover > .menu-flyout.is-wide,
-.menu-flyout.is-wide.is-open {
-  display: grid;
+/* 同一时间只显示当前打开的浮层 */
+.menu-flyout.is-open {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
 }
 
-.menu-entry:hover > .menu-item .menu-arrow {
-  transform: rotate(90deg);
+/* 分组按列排，列内不跨列，避免浮层过长 */
+.flyout-column {
+  display: flex;
+  flex-direction: column;
+  width: 210px;
+  flex: none;
+}
+
+.flyout-group {
+  flex: none;
 }
 
 .flyout-group + .flyout-group {

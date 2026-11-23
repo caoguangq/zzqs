@@ -114,8 +114,7 @@ export const menus = [
         key: 'desensitize-setting',
         label: '脱敏设置管理',
         children: [
-          { key: 'desensitize-list', label: '设置列表', route: '/new/41' },
-          { key: 'desensitize-rule', label: '规则配置', route: '/new/41' }
+          { key: 'desensitize-list', label: '设置列表', route: '/new/41' }
         ]
       }
     ]
