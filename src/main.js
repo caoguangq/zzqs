@@ -6,5 +6,6 @@ import App from './App.vue'
 import router from './router'
 import './styles/global.css'
 import './styles/new-feature.css'
+import './styles/portal-pages.css'
 
 createApp(App).use(ElementPlus, { locale: zhCn }).use(router).mount('#app')

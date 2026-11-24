@@ -3,6 +3,36 @@ import { getFeatureBreadcrumb } from '../views/newFeatures/registry.js'
 
 const routes = [
   {
+    path: '/home',
+    name: 'my-home',
+    component: () => import('../views/MyHome.vue'),
+    meta: { breadcrumb: ['我的首页'] }
+  },
+  {
+    path: '/visual',
+    name: 'data-visualization',
+    component: () => import('../views/DataVisualization.vue'),
+    meta: { breadcrumb: ['数据可视化'] }
+  },
+  {
+    path: '/notice',
+    name: 'notice-center',
+    component: () => import('../views/NoticeCenter.vue'),
+    meta: { breadcrumb: ['公告'] }
+  },
+  {
+    path: '/sql',
+    name: 'handwrite-sql',
+    component: () => import('../views/HandwriteSql.vue'),
+    meta: { breadcrumb: ['手写SQL'] }
+  },
+  {
+    path: '/message5g',
+    name: 'message-5g',
+    component: () => import('../views/Message5G.vue'),
+    meta: { breadcrumb: ['5G消息'] }
+  },
+  {
     path: '/query/scheduled',
     component: () => import('../views/newFeatures/ScheduledTaskBrowse.vue'),
     meta: { breadcrumb: ['自助取数', '取数任务', '定时取数浏览'] }
